@@ -25,7 +25,9 @@
 ;; '1' represents the minimum level
 (defconst mtext-font-lock-keywords-1
   (list
-   '("^[A-Za-z0-9\\-]+" . font-lock-doc-markup-face))
+   '("^[A-Za-z0-9\\-]+" . font-lock-doc-markup-face)
+   '("\\[\\(\\:[A-Za-z0-9\\-]+\\)" . (1 font-lock-keyword-face))
+   '("\\<\\(true\\|false\\)\\>" . font-lock-constant-face))
   "Highlight semantic names in mtext mode")
 
 ;; Now select level 1
