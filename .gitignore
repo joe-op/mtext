@@ -1,2 +1,7 @@
 *.elc
 *.txt
+
+
+# Added by cargo
+
+/target
