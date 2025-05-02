@@ -1,9 +1,10 @@
 mod process;
+mod template;
 
 use anyhow::Result;
 use clap::Parser;
 use std::fs::File;
-use std::io::{BufReader, BufWriter, Stdout, Write};
+use std::io::{BufReader, BufWriter};
 
 /// Format a source file using templates
 #[derive(Parser)]
@@ -20,23 +21,20 @@ struct Args {
     template_directory: String,
 }
 
-fn stdout_writer() -> BufWriter<Stdout> {
-    BufWriter::new(std::io::stdout())
-}
-
 fn main() -> Result<()> {
     let args = Args::parse();
 
     // TODO: evaluate r/w open strategy
     let f = File::open(args.source)?;
     let reader = BufReader::new(f);
+    let tera = template::initialize(&args.template_directory)?;
     if args.output == "-" {
-        let writer = BufWriter::new(std::io::stdout());
-        process::process(reader, &writer)?;
+        let mut writer = BufWriter::new(std::io::stdout());
+        process::process(&tera, reader, &mut writer)?;
     } else {
         let f = File::open(args.output)?;
-        let writer = BufWriter::new(f);
-        process::process(reader, &writer);
+        let mut writer = BufWriter::new(f);
+        process::process(&tera, reader, &mut writer)?;
     }
 
     Ok(())

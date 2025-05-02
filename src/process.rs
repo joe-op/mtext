@@ -1,8 +1,9 @@
-use anyhow::{Context, Result, anyhow};
-
+use anyhow::{Context, Result};
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
+use tera::Tera;
 
-pub fn process<I, O>(reader: BufReader<I>, writer: &BufWriter<O>) -> Result<()>
+// TODO: Arc / multithread?
+pub fn process<I, O>(tera: &Tera, reader: BufReader<I>, writer: &mut BufWriter<O>) -> Result<()>
 where
     I: Sized + Read,
     O: Write,
@@ -27,13 +28,27 @@ where
             });
 
             match template_and_body {
-                Some((template, body)) => println!("|{}| {}", template, body),
-                None => (),
-            }
-
-            // load template
-            // format using template
-            // write
+                Some((template, body)) => {
+                    // load template
+                    // format using template
+                    // write
+                    let mut context = tera::Context::new();
+                    context.try_insert("body", body).with_context(|| {
+                        format!(
+                            "Failed to create context for template {} with body {}",
+                            template, body
+                        )
+                    })?;
+                    let output: String = tera.render(template, &context).with_context(|| {
+                        format!("Failed to render template {} with body {}", template, body)
+                    })?;
+                    writer.write(output.as_ref()).with_context(|| {
+                        format!("Error writing {} with body {}", template, body)
+                    })?;
+                    anyhow::Ok(())
+                }
+                None => Ok(()),
+            }?
         }
     }
 
