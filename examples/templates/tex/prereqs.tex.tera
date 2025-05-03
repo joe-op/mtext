@@ -1,0 +1,28 @@
+%%\documentclass[11pt,twoside,a5paper]{memoir}
+%%\documentclass[12pt,twoside,statementpaper]{memoir}
+\documentclass[14pt,oneside,a5paper]{memoir}
+
+\usepackage{lettrine}
+%% scale fonts
+\usepackage{lmodern}
+
+%% \DisemulatePackage{setspace}
+%% \usepackage{setspace}
+%% Two columns
+%%\documentclass[11pt,oneside,landscape,openright,twocolumn]{memoir}
+
+\setlength{\vleftmargin}{0em}
+\setlength{\vindent}{2em}
+\setlength{\versewidth}{12em}
+\setlength{\vleftskip}{1em}  %% Space between flagverse and verse
+
+%% Commenting out for oneside
+%% \setlrmarginsandblock{0.5in}{1in}{*}
+%% \setulmarginsandblock{*}{2cm}{1.3}
+
+\setlrmarginsandblock{1.9cm}{1.9cm}{*}
+\setulmarginsandblock{2.5cm}{*}{1}
+\checkandfixthelayout
+
+\begin{document}
+

@@ -1,6 +1,8 @@
 # Excerpt from The Tale of Benjamin Bunny by Beatrix Potter
 # 1904, Public Domain
 
+prereqs
+
 title The Tale of Benjamin Bunny
 author Beatrix Potter
 
@@ -67,3 +69,5 @@ text Peter said he thought he might feel better if he went for a walk.
 text They went away hand in hand, and got upon the flat top of the wall at the bottom of the wood. From here they looked down into
 text Mr. McGregor's garden. Peter's coat and shoes were plainly to be seen upon the scarecrow, topped with an old tam-o'-shanter
 text of Mr. McGregor's.
+
+postreqs
