@@ -23,6 +23,7 @@ struct Args {
 
 fn main() -> Result<()> {
     let args = Args::parse();
+    sensible_env_logger::init!();
 
     // TODO: evaluate r/w open strategy
     let f = File::open(args.source)?;

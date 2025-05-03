@@ -1,4 +1,5 @@
 use anyhow::{Context, Result};
+use log::LevelFilter;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use tera::Tera;
 
@@ -8,6 +9,29 @@ where
     I: Sized + Read,
     O: Write,
 {
+    // TODO: document
+    let newline_output: Option<String> = match tera.render("_newline", &tera::Context::new()) {
+        Ok(s) => Ok(Some(s)),
+        Err(err) => match &err.kind {
+            tera::ErrorKind::TemplateNotFound(_) => Ok(None),
+            _ => {
+                Err(err).with_context(|| "A newline template was found, but could not be rendered")
+            }
+        },
+    }?;
+
+    if log::max_level() <= LevelFilter::Debug {
+        let mut template_names = tera
+            .get_template_names()
+            .filter(|template_name| !template_name.ends_with(".tera"))
+            .collect::<Vec<_>>();
+        template_names.sort();
+        log::debug!(
+            "Running with templates:\n - {}",
+            template_names.join("\n - ")
+        );
+    }
+
     for line in reader.lines() {
         let line = line.with_context(|| "I/O error while reading input")?;
         if !line.trim().is_empty() {
@@ -29,10 +53,8 @@ where
 
             match template_and_body {
                 Some((template, body)) => {
-                    // load template
-                    // format using template
-                    // write
                     let mut context = tera::Context::new();
+                    // TODO: variables
                     context.try_insert("body", body).with_context(|| {
                         format!(
                             "Failed to create context for template {} with body {}",
@@ -45,6 +67,20 @@ where
                     writer.write(output.as_ref()).with_context(|| {
                         format!("Error writing {} with body {}", template, body)
                     })?;
+
+                    match newline_output {
+                        Some(ref newline_output) => writer
+                            .write(newline_output.as_ref())
+                            .map(|_| ())
+                            .with_context(|| {
+                                format!(
+                                    "Failed to render newline after template {} with body {}",
+                                    template, body
+                                )
+                            }),
+                        None => anyhow::Ok(()),
+                    }?;
+
                     anyhow::Ok(())
                 }
                 None => Ok(()),
