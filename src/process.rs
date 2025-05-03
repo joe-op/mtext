@@ -10,6 +10,8 @@ where
     O: Write,
 {
     // TODO: document
+    // TODO: add flag
+    // TODO: similar flag & pattern for rendering comments
     let newline_output: Option<String> = match tera.render("_newline", &tera::Context::new()) {
         Ok(s) => Ok(Some(s)),
         Err(err) => match &err.kind {
@@ -40,43 +42,40 @@ where
             let mut template_and_string_iterator = line.splitn(2, ' ');
             let template_name = template_and_string_iterator.next();
 
-            let template_and_body: Option<(&str, &str)> = template_name.and_then(|template_name| {
-                let template_name = template_name.trim();
-                if template_name == "" || template_name == "#" {
-                    None
-                } else {
-                    template_and_string_iterator
-                        .next()
-                        .map(|body| (template_name, body))
-                }
-            });
+            let template_and_body: Option<(&str, Option<&str>)> =
+                template_name.and_then(|template_name| {
+                    let template_name = template_name.trim();
+                    if template_name == "" || template_name == "#" {
+                        None
+                    } else {
+                        Some((template_name, template_and_string_iterator.next()))
+                    }
+                });
 
             match template_and_body {
                 Some((template, body)) => {
                     let mut context = tera::Context::new();
+                    let template_with_body_str =
+                        format!("template {} with body {}", template, body.unwrap_or(""));
                     // TODO: variables
-                    context.try_insert("body", body).with_context(|| {
-                        format!(
-                            "Failed to create context for template {} with body {}",
-                            template, body
-                        )
-                    })?;
-                    let output: String = tera.render(template, &context).with_context(|| {
-                        format!("Failed to render template {} with body {}", template, body)
-                    })?;
-                    writer.write(output.as_ref()).with_context(|| {
-                        format!("Error writing {} with body {}", template, body)
-                    })?;
+                    if let Some(body) = body {
+                        context.try_insert("body", body).with_context(|| {
+                            format!("Failed to create context for {}", template_with_body_str)
+                        })?
+                    };
+                    let output: String = tera
+                        .render(template, &context)
+                        .with_context(|| format!("Failed to render {}", template_with_body_str))?;
+                    writer
+                        .write(output.as_ref())
+                        .with_context(|| format!("Error writing {}", template_with_body_str))?;
 
                     match newline_output {
                         Some(ref newline_output) => writer
                             .write(newline_output.as_ref())
                             .map(|_| ())
                             .with_context(|| {
-                                format!(
-                                    "Failed to render newline after template {} with body {}",
-                                    template, body
-                                )
+                                format!("Failed to render newline after {}", template_with_body_str)
                             }),
                         None => anyhow::Ok(()),
                     }?;
