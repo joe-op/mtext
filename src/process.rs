@@ -3,6 +3,22 @@ use log::LevelFilter;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use tera::Tera;
 
+enum Template<'a> {
+    Cached(CachedOutput<'a>),
+    Template(TemplateCall<'a>),
+}
+
+#[derive(Clone, Debug)]
+struct CachedOutput<'a> {
+    name: &'a str,
+    output: String,
+}
+
+struct TemplateCall<'a> {
+    template: &'a str,
+    body: Option<&'a str>, // TODO: variables
+}
+
 // TODO: Arc / multithread?
 pub fn process<I, O>(tera: &Tera, reader: BufReader<I>, writer: &mut BufWriter<O>) -> Result<()>
 where
@@ -12,15 +28,18 @@ where
     // TODO: document
     // TODO: add flag
     // TODO: similar flag & pattern for rendering comments
-    let newline_output: Option<String> = match tera.render("_newline", &tera::Context::new()) {
-        Ok(s) => Ok(Some(s)),
-        Err(err) => match &err.kind {
-            tera::ErrorKind::TemplateNotFound(_) => Ok(None),
-            _ => {
-                Err(err).with_context(|| "A newline template was found, but could not be rendered")
-            }
-        },
-    }?;
+    let newline_output: Option<CachedOutput> =
+        match tera.render("_newline", &tera::Context::new()) {
+            Ok(s) => Ok(Some(CachedOutput {
+                name: "newline",
+                output: s,
+            })),
+            Err(err) => match &err.kind {
+                tera::ErrorKind::TemplateNotFound(_) => Ok(None),
+                _ => Err(err)
+                    .with_context(|| "A newline template was found, but could not be rendered"),
+            },
+        }?;
 
     if log::max_level() <= LevelFilter::Debug {
         let mut template_names = tera
@@ -42,18 +61,35 @@ where
             let mut template_and_string_iterator = line.splitn(2, ' ');
             let template_name = template_and_string_iterator.next();
 
-            let template_and_body: Option<(&str, Option<&str>)> =
-                template_name.and_then(|template_name| {
-                    let template_name = template_name.trim();
-                    if template_name == "" || template_name == "#" {
-                        None
-                    } else {
-                        Some((template_name, template_and_string_iterator.next()))
-                    }
-                });
+            let template_and_body: Option<Template> = template_name.and_then(|template_name| {
+                let template_name = template_name.trim();
+                if template_name == "" {
+                    newline_output
+                        .clone()
+                        .map(|newline_output| Template::Cached(newline_output))
+                } else if template_name == "#" {
+                    None
+                } else {
+                    Some(Template::Template(TemplateCall {
+                        template: template_name,
+                        body: template_and_string_iterator.next(),
+                    }))
+                }
+            });
 
             match template_and_body {
-                Some((template, body)) => {
+                Some(Template::Cached(cached_output)) => {
+                    writer
+                        .write(cached_output.output.as_ref())
+                        .with_context(|| {
+                            format!(
+                                "Failed to render cached output for template {}",
+                                cached_output.name
+                            )
+                        })?;
+                    Ok(())
+                }
+                Some(Template::Template(TemplateCall { template, body })) => {
                     let mut context = tera::Context::new();
                     let template_with_body_str =
                         format!("template {} with body {}", template, body.unwrap_or(""));
@@ -72,7 +108,7 @@ where
 
                     match newline_output {
                         Some(ref newline_output) => writer
-                            .write(newline_output.as_ref())
+                            .write(newline_output.output.as_ref())
                             .map(|_| ())
                             .with_context(|| {
                                 format!("Failed to render newline after {}", template_with_body_str)

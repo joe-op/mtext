@@ -1,6 +1,7 @@
 *.aux
 *.elc
 *.log
+*.pdf
 *.tex
 *.txt
 
