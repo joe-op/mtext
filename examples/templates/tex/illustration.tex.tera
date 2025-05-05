@@ -1,0 +1,3 @@
+\begin{center}
+  {% raw %}\includegraphics{{% endraw %}{{ body }}{% raw %}}{% endraw %}
+\end{center}

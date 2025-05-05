@@ -106,6 +106,8 @@ where
                         .write(output.as_ref())
                         .with_context(|| format!("Error writing {}", template_with_body_str))?;
 
+                    // TODO: extra newlines are being added.
+                    //   see last line of example PDF.
                     match newline_output {
                         Some(ref newline_output) => writer
                             .write(newline_output.output.as_ref())

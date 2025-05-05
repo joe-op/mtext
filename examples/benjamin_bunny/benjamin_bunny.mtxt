@@ -1,12 +1,15 @@
 # Excerpt from The Tale of Benjamin Bunny by Beatrix Potter
 # 1904, Public Domain
 
-prereqs
+# TODO: use keywords for the images path once implemented
+prereqs examples/benjamin_bunny/resources/images/
 
 title The Tale of Benjamin Bunny
 author Beatrix Potter
 
 # Illustration 04 home
+# TODO: expand, use parameters
+illustration 01_home.jpg
 
 book-subtitle For the children of Sawrey
 
@@ -15,6 +18,7 @@ book-subtitle from
 book-subtitle Old Mr. Bunny
 
 # Illustration 08 the bank
+illustration 02_the_bank.jpg
 
 text One morning a little rabbit sat on a bank.
 
@@ -23,11 +27,13 @@ text He pricked his ears and listened to the trit-trot, trit-trot of a pony.
 text A gig was coming along the road; it was driven by Mr. McGregor, and beside him sat Mrs. McGregor in her best bonnet.
 
 # Illustration 11 running
+illustration 03_running.jpg
 
 text As soon as they had passed, little Benjamin Bunny slid down into the road, and set off--with a hop, skip, and a
 text jump--to call upon his relations, who lived in the wood at the back of Mr. McGregor's garden.
 
 # Illustration 12 dining
+illustration 04_dining.jpg
 
 text That wood was full of rabbit holes; and in the neatest, sandiest hole of all lived Benjamin's aunt and his
 text cousins--Flopsy, Mopsy, Cotton-tail, and Peter.
@@ -36,17 +42,20 @@ text Old Mrs. Rabbit was a widow; she earned her living by knitting rabbit-wool 
 text She also sold herbs, and rosemary tea, and rabbit-tobacco (which is what we call lavender).
 
 # Illustration 15 peeking
+illustration 05_peeking.jpg
 
 text Little Benjamin did not very much want to see his Aunt.
 
 text He came round the back of the fir-tree, and nearly tumbled upon the top of his Cousin Peter.
 
 # Illustration 16 handkerchief
+illustration 06_handkerchief.jpg
 
 
 text Peter was sitting by himself. He looked poorly, and was dressed in a red cotton pocket-handkerchief.
 
 # Illustration 19 handkerchief & friend
+illustration 07_handkerchief_and_friend.jpg
 
 text "Peter," said little Benjamin, in a whisper, "who has got your clothes?"
 
@@ -57,6 +66,7 @@ text Little Benjamin sat down beside his cousin and assured him that Mr. McGrego
 text and certainly for the day, because she was wearing her best bonnet.
 
 # Illustration 20 venturing
+illustration 08_venturing.jpg
 
 text Peter said he hoped that it would rain.
 
@@ -65,6 +75,7 @@ text At this point old Mrs. Rabbit's voice was heard inside the rabbit hole, cal
 text Peter said he thought he might feel better if he went for a walk.
 
 # Illustration 23 walking
+illustration 09_walking.jpg
 
 text They went away hand in hand, and got upon the flat top of the wall at the bottom of the wood. From here they looked down into
 text Mr. McGregor's garden. Peter's coat and shoes were plainly to be seen upon the scarecrow, topped with an old tam-o'-shanter

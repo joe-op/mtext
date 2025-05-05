@@ -11,6 +11,10 @@
 %% Two columns
 %%\documentclass[11pt,oneside,landscape,openright,twocolumn]{memoir}
 
+%% parameterize (?)
+\usepackage{graphicx}
+\graphicspath{ {{ '{' }}{{ body }}{{ '/}' }} }
+
 \setlength{\vleftmargin}{0em}
 \setlength{\vindent}{2em}
 \setlength{\versewidth}{12em}
