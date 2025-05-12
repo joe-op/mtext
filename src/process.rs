@@ -1,3 +1,5 @@
+mod line;
+
 use anyhow::{Context, Result};
 use log::LevelFilter;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
