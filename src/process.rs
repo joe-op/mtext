@@ -4,6 +4,7 @@ use anyhow::{Context, Result};
 use log::LevelFilter;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use tera::Tera;
+use regex::Regex;
 
 enum Template<'a> {
     Cached(CachedOutput<'a>),
@@ -20,6 +21,15 @@ struct TemplateCall<'a> {
     template: &'a str,
     body: Option<&'a str>, // TODO: variables
 }
+
+// TODO: pattern to extract whitespace from start and finish of line
+//   use in process_line to trim string
+//   then, test process_line and incorporate in process
+static LINE_PATTERN: LazyLock<Regex> = LazyLock::load(
+    Regex::new(
+        ""
+    )
+)
 
 // TODO: Arc / multithread?
 pub fn process<I, O>(tera: &Tera, reader: BufReader<I>, writer: &mut BufWriter<O>) -> Result<()>
@@ -69,12 +79,12 @@ where
                     newline_output
                         .clone()
                         .map(|newline_output| Template::Cached(newline_output))
-                } else if template_name == "#" {
+                } else if template_name.starts_with("#") {
                     None
                 } else {
                     Some(Template::Template(TemplateCall {
                         template: template_name,
-                        body: template_and_string_iterator.next(),
+                        body: template_and_string_iterator.next().map(|body| body.stri),
                     }))
                 }
             });
@@ -128,4 +138,8 @@ where
     }
 
     Ok(())
+}
+
+fn process_line(line: String) -> Result<Option<String>> {
+    let trimmed_line = line.split_whitespace();
 }

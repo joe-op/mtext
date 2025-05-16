@@ -13,7 +13,7 @@ struct Args {
     /// The source file to process
     #[arg(short, long)]
     source: String,
-    /// The output file or stdout, default stdout
+    /// The output file or stdout (-)
     #[arg(short, long, default_value = "-")]
     output: String,
     /// The directory containing the Tera templates used for formatting

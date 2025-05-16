@@ -481,6 +481,7 @@ dependencies = [
  "anyhow",
  "clap",
  "log",
+ "regex",
  "sensible-env-logger",
  "tera",
  "walkdir",
