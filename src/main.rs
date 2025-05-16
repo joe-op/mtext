@@ -13,7 +13,7 @@ struct Args {
     /// The source file to process
     #[arg(short, long)]
     source: String,
-    /// The output file or stdout, default stdout
+    /// The output file or stdout (-)
     #[arg(short, long, default_value = "-")]
     output: String,
     /// The directory containing the Tera templates used for formatting
@@ -29,13 +29,14 @@ fn main() -> Result<()> {
     let f = File::open(args.source)?;
     let reader = BufReader::new(f);
     let tera = template::initialize(&args.template_directory)?;
+    let process_patterns = process::init_patterns()?;
     if args.output == "-" {
         let mut writer = BufWriter::new(std::io::stdout());
-        process::process(&tera, reader, &mut writer)?;
+        process::process(&process_patterns, &tera, reader, &mut writer)?;
     } else {
         let f = File::open(args.output)?;
         let mut writer = BufWriter::new(f);
-        process::process(&tera, reader, &mut writer)?;
+        process::process(&process_patterns, &tera, reader, &mut writer)?;
     }
 
     Ok(())
