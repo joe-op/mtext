@@ -71,3 +71,10 @@ The `M-p` sequence is mapped to the function `mtext-paragraph-collapse`.
 1. C+y to paste
 2. C+x C+x to re-select pasted region
 3. M-p to collapse whitespace in selected region
+
+## License
+
+See [LICENSE.md](./LICENSE.md) for the license.
+
+For the source of the MIT No AI license, see [bitmc/mit-no-ai-license](https://github.com/bmitc/mit-no-ai-license),
+commit [2ebfc3f1](https://github.com/bmitc/mit-no-ai-license/commit/2ebfc3f1347268f392147b42b3bdc7dd54963c25).
