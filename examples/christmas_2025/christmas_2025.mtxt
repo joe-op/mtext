@@ -1,0 +1,30 @@
+song-title O Little Town of Bethlehem
+
+
+_stanza:
+- O little town of Bethlehem
+- How still we see thee lie
+- Above thy deep and dreamless sleep
+- The silent stars go by
+_stanza:
+- Yet in thy dark streets shineth
+- The everlasting light
+- The hopes and fears of all the years
+- Are met in thee tonight
+^verse
+
+# stanza: syntax: consume the following hyphen-prefixed strings as `items`
+# _stanza syntax: instead of rendering a stanza template, store cumulative items as `stanza_items` and
+#   store the latest item in a stack as `stanza_item`
+# ^verse syntax: render verse template with `stanza_items` and drop all stored items
+# ^verse?stanza syntax: render verse template with `stanza_items` and drop only
+#    `stanza_items` and `stanza_item` (stack?)
+# ^verse:stanza syntax: same as above but error if listed items don't match used variables
+#    and drop everything when done
+# misc:
+# - drop everything on newline
+# - use _newline explicitly to add a newline
+# - error if no newline after ^ call, unless ? is used
+#   - offer to fix with --fix
+
+new-verse
