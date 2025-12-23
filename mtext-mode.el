@@ -7,6 +7,9 @@
 (add-to-list 'auto-mode-alist '("\\.mtext\\'" . mtext-mode))
 
 ;;; keymap
+;;fix (12/23/2025): In mtext-paragraph-collapse:
+;;    mtext-mode.el:13:8: Warning: ‘replace-regexp’ is for interactive use only; use
+;;    ‘re-search-forward’ and ‘replace-match’ instead.
 (defun mtext-paragraph-collapse ()
   (interactive)
   "Collapse whitespace in the highlighed paragraph"
